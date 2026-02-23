@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Numerics;
 using System.Runtime.Serialization;
 using Intersect.Enums;
 using Intersect.Framework.Core.AssetManagement;
@@ -175,12 +176,22 @@ public sealed partial class ClientConfiguration : IConfiguration<ClientConfigura
     public string MenuMusic { get; set; } = DefaultMenuMusic;
 
     /// <summary>
+    /// Menu overlay
+    /// </summary>
+    public string MenuOverlay { get; set; }
+
+    /// <summary>
     /// Sets the main menu's background texture, if the the index of the list is bigger than 1,
     /// the background will be animated by sequentially drawing the texture files from the list.
     /// Static background Example: { "background.png" },
     /// Animated background Example: { "background_0.png", "background_1.png", "background_2.png" },
     /// </summary>
     public List<string> MenuBackground { get; set; } = ["background.png"];
+
+    /// <summary>
+    /// Menu Scroll. Overwrite DisplayMode
+    /// </summary>
+    public Vector2 MenuScroll { get; set; }
 
     /// <summary>
     /// Sets the display mode of the main menu's background.

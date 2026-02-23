@@ -51,6 +51,8 @@ public static partial class Graphics
     //Rendering Variables
     private static IGameTexture? sMenuBackground;
 
+    private static IGameTexture? sMenuOverlay;
+
     public static int DrawCalls;
 
     public static int EntitiesDrawn;
@@ -118,6 +120,11 @@ public static partial class Graphics
 
     public static float MaximumWorldScale => Options.Instance?.Map?.MaximumWorldScale ?? 1;
 
+
+    //Scroll
+    private static Vector2 BackgroundScrollOffset = Vector2.Zero;
+    private static long LastBackgroundScrollTime;
+
     //Init Functions
     public static void InitGraphics()
     {
@@ -161,6 +168,7 @@ public static partial class Graphics
                 RenderingEntities[z, i] = [];
             }
         }
+        LastBackgroundScrollTime = Timing.Global.MillisecondsUtc;
     }
 
     public static void DrawIntro()
@@ -187,6 +195,7 @@ public static partial class Graphics
             return;
         }
 
+        
         // Animated background in the main menu.
         if (ClientConfiguration.Instance.MenuBackground.Count > 1)
         {
@@ -223,36 +232,58 @@ public static partial class Graphics
             }
         }
 
-        // Switch between the preferred display mode, then render the fullscreen texture.
-        switch (ClientConfiguration.Instance.MenuBackgroundDisplayMode)
+        if (ClientConfiguration.Instance.MenuScroll != Vector2.Zero)
         {
-            case DisplayMode.Default:
-                DrawFullScreenTexture(sMenuBackground);
-                break;
+            DrawFullScreenScrolled(sMenuBackground);
+        }
+        else
+        {
 
-            case DisplayMode.Center:
-                DrawFullScreenTextureCentered(sMenuBackground);
-                break;
+            // Switch between the preferred display mode, then render the fullscreen texture.
+            switch (ClientConfiguration.Instance.MenuBackgroundDisplayMode)
+            {
+                case DisplayMode.Default:
+                    DrawFullScreenTexture(sMenuBackground);
+                    break;
 
-            case DisplayMode.Stretch:
-                DrawFullScreenTextureStretched(sMenuBackground);
-                break;
+                case DisplayMode.Center:
+                    DrawFullScreenTextureCentered(sMenuBackground);
+                    break;
 
-            case DisplayMode.FitHeight:
-                DrawFullScreenTextureFitHeight(sMenuBackground);
-                break;
+                case DisplayMode.Stretch:
+                    DrawFullScreenTextureStretched(sMenuBackground);
+                    break;
 
-            case DisplayMode.FitWidth:
-                DrawFullScreenTextureFitWidth(sMenuBackground);
-                break;
+                case DisplayMode.FitHeight:
+                    DrawFullScreenTextureFitHeight(sMenuBackground);
+                    break;
 
-            case DisplayMode.Fit:
-                DrawFullScreenTextureFitMaximum(sMenuBackground);
-                break;
+                case DisplayMode.FitWidth:
+                    DrawFullScreenTextureFitWidth(sMenuBackground);
+                    break;
 
-            case DisplayMode.Cover:
-                DrawFullScreenTextureFitMinimum(sMenuBackground);
-                break;
+                case DisplayMode.Fit:
+                    DrawFullScreenTextureFitMaximum(sMenuBackground);
+                    break;
+
+                case DisplayMode.Cover:
+                    DrawFullScreenTextureFitMinimum(sMenuBackground);
+                    break;
+            }
+        }
+
+        if (ClientConfiguration.Instance.MenuOverlay != "")
+        {
+            sMenuOverlay = sContentManager.GetTexture(
+                TextureType.Gui, ClientConfiguration.Instance.MenuOverlay
+            );
+
+            if(sMenuOverlay == null)
+            {
+                return;
+            }
+
+            DrawFullScreenTexture(sMenuOverlay);
         }
     }
 
@@ -944,6 +975,47 @@ public static partial class Graphics
         else
         {
             DrawFullScreenTextureFitWidth(tex);
+        }
+    }
+
+    public static void DrawFullScreenScrolled(IGameTexture tex)
+    {
+        var currentTimeMs = Timing.Global.MillisecondsUtc;
+        Vector2 _bgScrollDirection = ClientConfiguration.Instance.MenuScroll;
+
+        float delta = (currentTimeMs - LastBackgroundScrollTime) / 1000f;
+        LastBackgroundScrollTime = currentTimeMs;
+
+        BackgroundScrollOffset += _bgScrollDirection * delta;
+
+        BackgroundScrollOffset.X %= tex.Width;
+        BackgroundScrollOffset.Y %= tex.Height;
+
+        float startX = -BackgroundScrollOffset.X;
+        float startY = -BackgroundScrollOffset.Y;
+
+        float texW = tex.Width;
+        float texH = tex.Height;
+
+        float screenW = Renderer.ScreenWidth;
+        float screenH = Renderer.ScreenHeight;
+
+        for (float x = startX; x < screenW; x += texW)
+        {
+            for (float y = startY; y < screenH; y += texH)
+            {
+                DrawGameTexture(
+                    tex,
+                    new FloatRect(0, 0, texW, texH),
+                    new FloatRect(
+                        x + Renderer.GetView().X,
+                        y + Renderer.GetView().Y,
+                        texW,
+                        texH
+                    ),
+                    Color.White
+                );
+            }
         }
     }
 
