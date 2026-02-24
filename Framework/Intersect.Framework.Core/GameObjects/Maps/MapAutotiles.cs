@@ -1,4 +1,4 @@
-﻿using Intersect.Core;
+using Intersect.Core;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Framework.Core.GameObjects.Maps;
@@ -34,6 +34,8 @@ public partial class MapAutotiles
     public const byte AUTOTILE_XP = 6;
 
     public const byte RENDER_STATE_AUTOTILE = 2;
+
+    public const byte AUTOTILE_RANDOM = 8;
 
     // Rendering
     public const byte RENDER_STATE_NONE = 0;
@@ -566,7 +568,7 @@ public partial class MapAutotiles
         var autotile = Layers[layerName][x, y];
 
         // check if it needs to be rendered as an autotile
-        if (tile.Autotile == AUTOTILE_NONE || tile.Autotile == AUTOTILE_FAKE)
+        if (tile.Autotile == AUTOTILE_NONE || tile.Autotile == AUTOTILE_FAKE || tile.Autotile == AUTOTILE_RANDOM)
         {
             // default to... default
             autotile.RenderState = RENDER_STATE_NORMAL;
@@ -628,7 +630,7 @@ public partial class MapAutotiles
         }
 
         var tile = layer[x, y];
-        if (tile.Autotile == 0)
+        if (tile.Autotile == 0 || tile.Autotile == 8)
         {
             return;
         }

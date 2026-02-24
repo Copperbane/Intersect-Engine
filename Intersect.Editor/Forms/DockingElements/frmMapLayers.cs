@@ -204,7 +204,7 @@ public partial class FrmMapLayers : DockContent
             return;
         }
 
-        if (mTMouseDown && Globals.Autotilemode == 0)
+        if (mTMouseDown && (Globals.Autotilemode == 0 || Globals.Autotilemode == 8))
         {
             var tmpX = (int) Math.Floor((double) e.X / Options.Instance.Map.TileWidth);
             var tmpY = (int) Math.Floor((double) e.Y / Options.Instance.Map.TileHeight);
@@ -1011,6 +1011,7 @@ public partial class FrmMapLayers : DockContent
         cmbAutotile.Items.Add(Strings.Tiles.waterfall);
         cmbAutotile.Items.Add(Strings.Tiles.autotilexp);
         cmbAutotile.Items.Add(Strings.Tiles.animatedxp);
+        cmbAutotile.Items.Add(Strings.Tiles.random);
 
         //Map Animation Groupbox
         grpAnimation.Text = Strings.Attributes.MapAnimation;

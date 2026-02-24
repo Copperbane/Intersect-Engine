@@ -392,6 +392,19 @@ public partial class FrmMapEditor : DockContent
                             }
 
                             mMapChanged = true;
+                        }else if (Globals.Autotilemode == 8)
+                        {
+                            var rndW = new Random();
+                            var rndH = new Random();
+
+                            tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].TilesetId = Globals.CurrentTileset.Id;
+                            tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].X = Globals.CurSelX + rndW.Next(Globals.CurSelW + 1);
+                            tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].Y = Globals.CurSelY + rndH.Next(Globals.CurSelH + 1);
+                            tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].Autotile = 8;
+
+                            tmpMap.InitAutotiles();
+
+                            mMapChanged = true;
                         }
                         else
                         {
@@ -718,6 +731,20 @@ public partial class FrmMapEditor : DockContent
                                 }
                             }
                         }
+                        else if (Globals.Autotilemode == 8)
+                        {
+                            var rndW = new Random();
+                            var rndH = new Random();
+
+                            tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].TilesetId = Globals.CurrentTileset.Id;
+                            tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].X = Globals.CurSelX + rndW.Next(Globals.CurSelW + 1);
+                            tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].Y = Globals.CurSelY + rndH.Next(Globals.CurSelH + 1);
+                            tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].Autotile = 8;
+
+                            tmpMap.InitAutotiles();
+
+                            mMapChanged = true;
+                        }
                         else
                         {
                             tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].TilesetId = Globals.CurrentTileset.Id;
@@ -937,6 +964,15 @@ public partial class FrmMapEditor : DockContent
                                     x0, y0, Globals.CurrentLayer, tmpMap.GenerateAutotileGrid()
                                 );
                             }
+                        }
+                        else if(Globals.Autotilemode == 8) {
+                            var rndW = new Random();
+                            var rndH = new Random();
+
+                            tmpMap.Layers[Globals.CurrentLayer][x0, y0].TilesetId = Globals.CurrentTileset.Id;
+                            tmpMap.Layers[Globals.CurrentLayer][x0, y0].X = Globals.CurSelX + rndW.Next(Globals.CurSelW + 1);
+                            tmpMap.Layers[Globals.CurrentLayer][x0, y0].Y = Globals.CurSelY + rndH.Next(Globals.CurSelH + 1);
+                            tmpMap.Layers[Globals.CurrentLayer][x0, y0].Autotile = 8;
                         }
                         else
                         {
@@ -1333,6 +1369,16 @@ public partial class FrmMapEditor : DockContent
                             tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].Y = Globals.CurSelY + y1;
                             tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].Autotile = 0;
                         }
+                        else if(Globals.Autotilemode == 8)
+                        {
+                            var rndW = new Random();
+                            var rndH = new Random();
+
+                            tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].TilesetId = Globals.CurrentTileset.Id;
+                            tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].X = Globals.CurSelX + rndW.Next(Globals.CurSelW + 1);
+                            tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].Y = Globals.CurSelY + rndH.Next(Globals.CurSelH + 1);
+                            tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].Autotile = 8;
+                        }
                         else
                         {
                             tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].TilesetId = Globals.CurrentTileset.Id;
@@ -1478,8 +1524,19 @@ public partial class FrmMapEditor : DockContent
             currentLayer[tileX, tileY].TilesetId = Globals.CurrentTileset.Id;
             currentLayer[tileX, tileY].Autotile = (byte)Globals.Autotilemode;
 
-            currentLayer[tileX, tileY].X = Globals.CurSelX;
-            currentLayer[tileX, tileY].Y = Globals.CurSelY;
+            if (Globals.Autotilemode == 8)
+            {
+                var rndW = new Random();
+                var rndH = new Random();
+
+                currentLayer[tileX, tileY].X = Globals.CurSelX + rndW.Next(Globals.CurSelW + 1);
+                currentLayer[tileX, tileY].Y = Globals.CurSelY + rndH.Next(Globals.CurSelH + 1);
+            }
+            else
+            {
+                currentLayer[tileX, tileY].X = Globals.CurSelX;
+                currentLayer[tileX, tileY].Y = Globals.CurSelY;
+            }
 
             if (currentLayer[tileX, tileY].Autotile == 0)
             {
